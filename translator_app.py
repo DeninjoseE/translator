@@ -1,15 +1,16 @@
 import streamlit as st
-from googletrans import Translator, LANGUAGES
-
-# Initialize Google Translator
-translator = Translator()
+from deep_translator import GoogleTranslator
 
 # Function to get language code from language name
 def get_language_code(language_name):
-    for lang_code, lang_name in LANGUAGES.items():
-        if lang_name.lower() == language_name.lower():
-            return lang_code
-    return None
+    languages = {
+        'English': 'en',
+        'French': 'fr',
+        'Spanish': 'es',
+        'German': 'de',
+        'Italian': 'it'
+    }
+    return languages.get(language_name.capitalize(), None)
 
 # Custom CSS for styling the app
 st.markdown("""
@@ -47,7 +48,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Streamlit UI
-st.title("🌐 Language Translator using Seq2Seq Model")
+st.title("🌐 Language Translator")
 st.write("Translate text between languages using a dynamic, user-friendly interface.")
 
 # Input text
@@ -66,18 +67,22 @@ if st.button("🌍 Translate"):
     if target_lang_code is None:
         st.write(f"⚠️ Error: '{target_language_search}' is not a valid language name. Please try again.")
     else:
-        # Using googletrans for translation (placeholder)
-        translated_text = translator.translate(source_text, src=source_lang, dest=target_lang_code).text
-        st.success(f"**Translated Text**: {translated_text}")
+        try:
+            # Using deep-translator for translation
+            translator = GoogleTranslator(source=source_lang, target=target_lang_code)
+            translated_text = translator.translate(source_text)
+            st.success(f"**Translated Text**: {translated_text}")
+        except Exception as e:
+            st.error(f"❌ An error occurred: {str(e)}")
 
 # Show supported languages with better design
 if st.checkbox("Show supported languages"):
     st.write("Supported Languages:")
-    st.write(", ".join([lang_name.capitalize() for lang_name in LANGUAGES.values()]))
+    st.write(", ".join(["English", "French", "Spanish", "German", "Italian"]))
 
 # Footer styling
 st.markdown("""
     <div style="text-align: center; padding-top: 20px; font-size: 14px; color: #808080;">
-        Created by <a href="https://github.com/DeninjoseE" target="_blank">DENIN JOSE</a> | Powered by Streamlit & Google Translate API
+        Created by <a href="https://github.com/DeninjoseE" target="_blank">DENIN JOSE</a> | Powered by Streamlit & Deep Translator API
     </div>
     """, unsafe_allow_html=True)
